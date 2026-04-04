@@ -1,1020 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>Bigwizard Bot Toolkit — All in One</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    :root{
-      --bg:#020617; --panel:#0f172a; --accent:#38bdf8; --muted:#9ca3af; --text:#e5e7eb;
-      --radius:12px; --font-sans:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-      --font-mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; font-family:var(--font-sans); background:radial-gradient(circle at top,#020617 0,#000 55%);
-      color:var(--text); padding:14px; display:flex; justify-content:center;
-    }
-    .container{width:100%;max-width:1200px;border-radius:18px;padding:14px;background:linear-gradient(180deg,rgba(6,10,20,0.9),rgba(2,6,23,0.95));border:1px solid rgba(148,163,184,0.12);box-shadow:0 20px 50px rgba(0,0,0,0.7)}
-    header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
-    .brand{display:flex;align-items:center;gap:12px}
-    .logo{width:44px;height:44px;border-radius:999px;background:radial-gradient(circle at 30% 20%,#f97316,#e11d48 40%,#4f46e5 100%);box-shadow:0 0 24px rgba(56,189,248,0.25)}
-    h1{margin:0;font-size:1.2rem;letter-spacing:0.06em;text-transform:uppercase}
-    .subtitle{font-size:0.85rem;color:var(--muted)}
-    nav{display:flex;gap:8px;flex-wrap:wrap}
-    .nav-btn{padding:8px 12px;border-radius:999px;background:rgba(10,14,22,0.95);border:1px solid rgba(56,189,248,0.12);color:var(--text);cursor:pointer;font-size:0.9rem}
-    .nav-btn.active{box-shadow:0 8px 20px rgba(0,0,0,0.6);border-color:rgba(56,189,248,0.6)}
-    main{margin-top:14px;display:grid;grid-template-columns:1fr;gap:12px}
-    @media(min-width:980px){main{grid-template-columns:1fr 420px}}
-    .panel{background:rgba(12,16,28,0.95);border-radius:12px;padding:12px;border:1px solid rgba(30,64,175,0.6);display:flex;flex-direction:column;gap:10px}
-    .panel-title{font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.12em}
-    .tools-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
-    .card{padding:12px;border-radius:10px;background:rgba(8,12,18,0.95);border:1px solid rgba(148,163,184,0.06);cursor:pointer}
-    .card:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(0,0,0,0.6);border-color:rgba(56,189,248,0.25)}
-    .card-title{font-weight:700}
-    .card-desc{font-size:0.85rem;color:var(--muted);margin-top:6px}
-    .hint{font-size:0.82rem;color:var(--muted)}
-    input,textarea,select{width:100%;padding:8px;border-radius:8px;border:1px solid rgba(30,64,175,0.9);background:rgba(10,14,22,0.95);color:var(--text);font-size:0.9rem;outline:none}
-    textarea{min-height:80px;font-family:var(--font-mono);resize:vertical}
-    .grid-2{display:grid;gap:8px;grid-template-columns:1fr}
-    @media(min-width:640px){.grid-2{grid-template-columns:1fr 1fr}}
-    .btn-row{display:flex;gap:8px;flex-wrap:wrap}
-    button{border-radius:999px;padding:8px 12px;border:1px solid rgba(56,189,248,0.85);background:linear-gradient(180deg,rgba(56,189,248,0.06),rgba(10,14,22,0.98));color:var(--text);cursor:pointer;font-size:0.9rem}
-    .btn-ghost{border-color:rgba(148,163,184,0.5);background:rgba(10,14,22,0.95)}
-    .btn-xs{padding:6px 8px;font-size:0.82rem}
-    .output{background:rgba(10,14,22,0.95);padding:10px;border-radius:8px;border:1px solid rgba(30,64,175,0.9);font-family:var(--font-mono);font-size:0.85rem;white-space:pre;overflow:auto;max-height:260px}
-    .output.empty{color:var(--muted);font-style:italic}
-    .fields-list{display:flex;flex-direction:column;gap:8px;max-height:220px;overflow:auto;padding-right:4px}
-    .field-item{padding:8px;border-radius:8px;border:1px solid rgba(30,64,175,0.9);background:rgba(8,12,18,0.95);display:flex;flex-direction:column;gap:8px}
-    .field-top{display:flex;justify-content:space-between;align-items:center;gap:8px}
-    .field-inline{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:0.85rem}
-    .preview-card{display:flex;gap:10px;background:#2f3337;padding:10px;border-radius:10px;color:#eef0f2;max-height:360px;overflow:auto}
-    .preview-color{width:6px;border-radius:999px;background:#5865f2;flex-shrink:0}
-    .preview-main{flex:1;display:flex;flex-direction:column;gap:8px}
-    .preview-author{display:flex;align-items:center;gap:8px;color:#b5bac1;font-size:0.85rem}
-    .preview-title{font-weight:700;font-size:0.95rem}
-    .preview-desc{color:#dfe3e6;white-space:pre-wrap}
-    .preview-fields{display:flex;flex-direction:column;gap:6px}
-    .preview-field{background:rgba(0,0,0,0.18);padding:6px;border-radius:6px}
-    .preview-field-name{font-weight:700;color:#b5bac1;font-size:0.78rem;margin-bottom:4px}
-    .preview-footer{display:flex;align-items:center;gap:8px;color:#b5bac1;font-size:0.78rem}
-    .small-muted{font-size:0.82rem;color:var(--muted)}
-    .split{display:flex;gap:12px;flex-direction:column}
-    @media(min-width:980px){.split{flex-direction:row}}
-    .left,.right{flex:1}
-    .centered{display:flex;align-items:center;justify-content:center}
-    .kbd{background:rgba(255,255,255,0.03);padding:4px 6px;border-radius:6px;border:1px solid rgba(255,255,255,0.03);font-family:var(--font-mono);font-size:0.85rem}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bigwizard Media</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a2e;
+            color: #eeeeee;
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+        body.loaded { opacity: 1; }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .card {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #0f3460;
+        }
+
+        h1 { margin: 0; font-size: 1.8rem; text-transform: uppercase; letter-spacing: 2px; }
+        h2 { color: #4e9af1; margin-top: 0; }
+
+        ul { padding-left: 20px; color: #b8c1ec; }
+        li { margin-bottom: 10px; opacity: 0; transition: opacity .4s ease; }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            box-sizing: border-box;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary { background-color: #4e9af1; color: white; }
+        .btn-secondary { background-color: #e94560; color: white; }
+        .btn:active { transform: scale(0.98); }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: .9rem;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <h1>Bigwizard Bot Toolkit</h1>
-          <div class="subtitle">All tools in one file · JSON Lab · Embed Builder · Slash Generator · More</div>
-        </div>
-      </div>
 
-      <nav id="nav">
-        <button class="nav-btn active" data-target="dashboard">Dashboard</button>
-        <button class="nav-btn" data-target="json-lab">JSON Lab</button>
-        <button class="nav-btn" data-target="embed-builder">Embed Builder</button>
-        <button class="nav-btn" data-target="slash-gen">Slash Command</button>
-        <button class="nav-btn" data-target="perms-calc">Perms Calc</button>
-        <button class="nav-btn" data-target="config-editor">Config Editor</button>
-        <button class="nav-btn" data-target="api-tester">API Tester</button>
-        <button class="nav-btn" data-target="interaction-sim">Interaction Sim</button>
-      </nav>
+    <header>
+        <h1 id="brand-name">BIGWIZARD MEDIA</h1>
     </header>
 
-    <main>
-      <!-- LEFT: Tools content -->
-      <section class="panel" id="content-panel">
-        <!-- Dashboard -->
-        <div id="dashboard" class="view">
-          <div class="panel-title">Toolkit Dashboard</div>
-          <div class="tools-grid" style="margin-top:8px">
-            <div class="card" data-target="json-lab"><div class="card-title">JSON Lab</div><div class="card-desc">Format, validate, minify JSON</div></div>
-            <div class="card" data-target="embed-builder"><div class="card-title">Embed Builder</div><div class="card-desc">Visual embed designer + JSON export</div></div>
-            <div class="card" data-target="slash-gen"><div class="card-title">Slash Command Generator</div><div class="card-desc">Build slash command JSON and code snippets</div></div>
-            <div class="card" data-target="perms-calc"><div class="card-title">Permission Calculator</div><div class="card-desc">Toggle perms → get integer</div></div>
-            <div class="card" data-target="config-editor"><div class="card-title">Config Editor</div><div class="card-desc">Edit and export bot configs</div></div>
-            <div class="card" data-target="api-tester"><div class="card-title">API Tester</div><div class="card-desc">Client-side Discord API tester</div></div>
-            <div class="card" data-target="interaction-sim"><div class="card-title">Interaction Simulator</div><div class="card-desc">Mock buttons, selects, modals</div></div>
-          </div>
-
-          <div style="margin-top:12px" class="hint">Tip: Use the nav or cards to jump to any tool. Everything runs locally in your browser.</div>
+    <div class="container">
+        <div class="card">
+            <h2>Our Magic</h2>
+            <ul id="service-list"></ul>
         </div>
 
-        <!-- JSON Lab -->
-        <div id="json-lab" class="view" style="display:none">
-          <div class="panel-title">JSON Formatter · Validator</div>
-          <textarea id="jl-input" placeholder='Paste JSON here. Example: {"name":"Bigwizard","active":true}'></textarea>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-            <div class="btn-row">
-              <button id="jl-validate">Validate</button>
-              <button id="jl-format">Format</button>
-              <button id="jl-minify" class="btn-ghost">Minify</button>
-            </div>
-            <div class="small-muted" id="jl-status">Waiting</div>
-          </div>
-
-          <div class="output empty" id="jl-output">Formatted JSON will appear here.</div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="jl-copy" class="btn-ghost">Copy output</button>
-              <button id="jl-clear" class="btn-ghost">Clear</button>
-            </div>
-            <div class="small-muted">Runs fully offline</div>
-          </div>
-        </div>
-
-        <!-- Embed Builder -->
-        <div id="embed-builder" class="view" style="display:none">
-          <div class="panel-title">Embed Builder</div>
-
-          <div class="grid-2">
-            <div>
-              <label>Title</label>
-              <input id="eb-title" type="text" placeholder="Announcement title" />
-            </div>
-            <div>
-              <label>URL (optional)</label>
-              <input id="eb-url" type="url" placeholder="https://example.com" />
-            </div>
-          </div>
-
-          <div>
-            <label>Description</label>
-            <textarea id="eb-desc" placeholder="Write your embed description here"></textarea>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <label>Color</label>
-              <input id="eb-color" type="color" value="#38bdf8" />
-            </div>
-            <div>
-              <label>Preset</label>
-              <select id="eb-preset">
-                <option value="custom">Custom</option>
-                <option value="announce">Announcement</option>
-                <option value="success">Success</option>
-                <option value="error">Error</option>
-                <option value="bigwizard">Bigwizard Brand</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <label>Author name</label>
-              <input id="eb-author-name" type="text" />
-            </div>
-            <div>
-              <label>Author icon URL</label>
-              <input id="eb-author-icon" type="url" />
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <label>Thumbnail URL</label>
-              <input id="eb-thumb" type="url" />
-            </div>
-            <div>
-              <label>Image URL</label>
-              <input id="eb-image" type="url" />
-            </div>
-          </div>
-
-          <div class="grid-2">
-            <div>
-              <label>Footer text</label>
-              <input id="eb-footer-text" type="text" />
-            </div>
-            <div>
-              <label>Footer icon URL</label>
-              <input id="eb-footer-icon" type="url" />
-            </div>
-          </div>
-
-          <hr />
-
-          <div style="display:flex;justify-content:space-between;align-items:center">
-            <div class="small-muted">Fields</div>
-            <div class="btn-row">
-              <button id="eb-add-field" class="btn-ghost btn-xs">＋ Add field</button>
-              <button id="eb-clear-fields" class="btn-ghost btn-xs">✕ Clear fields</button>
-            </div>
-          </div>
-
-          <div class="fields-list" id="eb-fields"></div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="eb-generate">{ } Generate JSON</button>
-              <button id="eb-copy" class="btn-ghost">Copy JSON</button>
-            </div>
-            <div class="small-muted" id="eb-status"></div>
-          </div>
-        </div>
-
-        <!-- Slash Command Generator -->
-        <div id="slash-gen" class="view" style="display:none">
-          <div class="panel-title">Slash Command Generator</div>
-
-          <div class="grid-2">
-            <div>
-              <label>Command name</label>
-              <input id="sg-name" type="text" placeholder="ping" />
-            </div>
-            <div>
-              <label>Command description</label>
-              <input id="sg-desc" type="text" placeholder="Check bot latency" />
-            </div>
-          </div>
-
-          <div style="margin-top:6px">
-            <label>Options (name:type:description:required) one per line</label>
-            <textarea id="sg-options" placeholder="user:user:Target user:true\nreason:string:Reason:false"></textarea>
-            <div class="hint">Supported types: string, integer, boolean, user, channel, role, mentionable, number</div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="sg-generate">Generate JSON</button>
-              <button id="sg-copy" class="btn-ghost">Copy JSON</button>
-            </div>
-            <div class="small-muted" id="sg-status"></div>
-          </div>
-
-          <div class="output empty" id="sg-output">Slash command JSON will appear here.</div>
-
-          <div style="margin-top:8px" class="hint">You can paste the generated JSON into your registration script or use it with REST endpoints.</div>
-        </div>
-
-        <!-- Permission Calculator -->
-        <div id="perms-calc" class="view" style="display:none">
-          <div class="panel-title">Permission Calculator</div>
-          <div class="hint">Toggle permissions to compute the permission integer for OAuth2 invite or role checks.</div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px">
-            <!-- A subset of common permissions -->
-            <label><input type="checkbox" class="perm" data-bit="0"> CREATE_INSTANT_INVITE</label>
-            <label><input type="checkbox" class="perm" data-bit="1"> KICK_MEMBERS</label>
-            <label><input type="checkbox" class="perm" data-bit="2"> BAN_MEMBERS</label>
-            <label><input type="checkbox" class="perm" data-bit="3"> ADMINISTRATOR</label>
-            <label><input type="checkbox" class="perm" data-bit="4"> MANAGE_CHANNELS</label>
-            <label><input type="checkbox" class="perm" data-bit="5"> MANAGE_GUILD</label>
-            <label><input type="checkbox" class="perm" data-bit="6"> ADD_REACTIONS</label>
-            <label><input type="checkbox" class="perm" data-bit="7"> VIEW_AUDIT_LOG</label>
-            <label><input type="checkbox" class="perm" data-bit="8"> PRIORITY_SPEAKER</label>
-            <label><input type="checkbox" class="perm" data-bit="9"> STREAM</label>
-            <label><input type="checkbox" class="perm" data-bit="10"> VIEW_CHANNEL</label>
-            <label><input type="checkbox" class="perm" data-bit="11"> SEND_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="12"> SEND_TTS_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="13"> MANAGE_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="14"> EMBED_LINKS</label>
-            <label><input type="checkbox" class="perm" data-bit="15"> ATTACH_FILES</label>
-            <label><input type="checkbox" class="perm" data-bit="16"> READ_MESSAGE_HISTORY</label>
-            <label><input type="checkbox" class="perm" data-bit="17"> MENTION_EVERYONE</label>
-            <label><input type="checkbox" class="perm" data-bit="18"> USE_EXTERNAL_EMOJIS</label>
-            <label><input type="checkbox" class="perm" data-bit="19"> VIEW_GUILD_INSIGHTS</label>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <div class="btn-row">
-              <button id="pc-calc">Calculate</button>
-              <button id="pc-clear" class="btn-ghost">Clear</button>
-            </div>
-            <div class="small-muted">Permission integer:</div>
-          </div>
-
-          <div class="output empty" id="pc-output">0</div>
-        </div>
-
-        <!-- Config Editor -->
-        <div id="config-editor" class="view" style="display:none">
-          <div class="panel-title">Config Editor</div>
-          <div class="hint">Edit bot config values and export JSON. Sensitive values remain local to your browser.</div>
-
-          <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Bot name</label>
-            <input id="cfg-name" type="text" placeholder="MyBot" />
-            <label>Prefix</label>
-            <input id="cfg-prefix" type="text" placeholder="!" />
-            <label>Owner ID</label>
-            <input id="cfg-owner" type="text" placeholder="123456789012345678" />
-            <label>Default settings (JSON)</label>
-            <textarea id="cfg-defaults" placeholder='{"welcomeChannel": "general", "modLog": "mod-log"}'></textarea>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="cfg-generate">Generate Config JSON</button>
-              <button id="cfg-copy" class="btn-ghost">Copy JSON</button>
-            </div>
-            <div class="small-muted" id="cfg-status"></div>
-          </div>
-
-          <div class="output empty" id="cfg-output">Config JSON will appear here.</div>
-        </div>
-
-        <!-- API Tester -->
-        <div id="api-tester" class="view" style="display:none">
-          <div class="panel-title">Discord API Tester</div>
-          <div class="hint">Client-side tester. Paste a bot token only if you understand the risks; it is stored only in memory while the page is open.</div>
-
-          <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Bot token (optional)</label>
-            <input id="api-token" type="text" placeholder="Bot token (kept in memory only)" />
-            <label>Endpoint</label>
-            <select id="api-endpoint">
-              <option value="GET /users/@me">GET /users/@me</option>
-              <option value="GET /guilds/{guild.id}">GET /guilds/{guild.id}</option>
-              <option value="GET /channels/{channel.id}">GET /channels/{channel.id}</option>
-              <option value="GET /channels/{channel.id}/messages">GET /channels/{channel.id}/messages</option>
-            </select>
-            <label>Custom path (optional)</label>
-            <input id="api-path" type="text" placeholder="/channels/123/messages" />
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="api-send">Send Request</button>
-              <button id="api-clear" class="btn-ghost">Clear</button>
-            </div>
-            <div class="small-muted" id="api-status"></div>
-          </div>
-
-          <div class="output empty" id="api-output">API response will appear here. Note: CORS may block some requests in the browser.</div>
-        </div>
-
-        <!-- Interaction Simulator -->
-        <div id="interaction-sim" class="view" style="display:none">
-          <div class="panel-title">Interaction SimulatorMock payloads for buttons, selects <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Interaction type</label>
-            <select id="is-type">Button</option>
-              <option value="select">Select menu</option>
-              <option value="modal">Modal submit</option>
-            </select>
-
-            <label>Custom ID</label>
-            <input id="is-customid" type="text" placeholder="my_button_123" />
-
-            <label>Values (for select) comma separated</label>
-            <input id="is-values" type="text" placeholder="opt1,opt2" />
-
-            <label>Modal fields (one per line: id:label:value)</label>
-            <textarea id="is-modal-fields" placeholder="name:Your name:Chase\nemail:Email:chase@example.com"></textarea>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="is-generate">Generate Payload</button>
-              <button id="is-copy" class="btn-ghost">Copy Payload</button> </div>
-
-         </div>
-           
-          </div>
-
-          <div>
-            <div class="small-muted">Preview area</div> </div>
-            </div>
-
-         
-
-  <script>
-    // Simple view navigation
-    const navBtns = Array.from(document.querySelectorAll('.nav-btn'));
-    const views = Array.from(document.querySelectorAll('.view'));
-    const cards = Array.from(document.querySelectorAll('.card'));
-    function showView(id){
-      views.forEach(v => v.id === id ? v.style.display = '' : v.style.display = 'none');
-      navBtns.forEach(b => b.dataset.target === id ? b.classList.add('active') : b.classList.remove('active'));
-      // update right-panel preview quick state
-    }
-    navBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.target)));
-    cards.forEach(c => c.addEventListener('click', () => showView(c.dataset.target)));
-
-    // JSON Lab logic
-    const jlInput = document.getElementById('jl-input');
-    const jlOutput = document.getElementById('jl-output');
-    const jlStatus = document.getElementById('jl-status');
-    document.getElementById('jl-validate').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      jlStatus.textContent = '';
-      if(!raw){ jlOutput.textContent = 'Nothing to validate.'; jlOutput.classList.add('empty'); jlStatus.textContent = 'Empty'; return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const pretty = JSON.stringify(parsed,null,2);
-        jlOutput.textContent = pretty; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Valid JSON';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty');
-        jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-format').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      if(!raw){ jlOutput.textContent = 'Nothing to format.'; jlOutput.classList.add('empty'); return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const pretty = JSON.stringify(parsed,null,2);
-        jlInput.value = pretty;
-        jlOutput.textContent = pretty; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Formatted';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty'); jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-minify').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      if(!raw){ jlOutput.textContent = 'Nothing to minify.'; jlOutput.classList.add('empty'); return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const min = JSON.stringify(parsed);
-        jlInput.value = min;
-        jlOutput.textContent = min; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Minified';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty'); jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-copy').addEventListener('click', async () => {
-      const text = jlOutput.textContent || '';
-      if(!text || jlOutput.classList.contains('empty')){ jlStatus.textContent = 'Nothing to copy.'; return; }
-      try{ await navigator.clipboard.writeText(text); jlStatus.textContent = 'Copied.' }catch(e){ jlStatus.textContent = 'Copy failed.' }
-    });
-    document.getElementById('jl-clear').addEventListener('click', () => { jlInput.value=''; jlOutput.textContent='Formatted JSON will appear here.'; jlOutput.classList.add('empty'); jlStatus.textContent='Cleared' });
-
-    // Embed Builder logic
-    const eb = {
-      title: document.getElementById('eb-title'),
-      url: document.getElementById('eb-url'),
-      desc: document.getElementById('eb-desc'),
-      color: document.getElementById('eb-color'),
-      preset: document.getElementById('eb-preset'),
-      authorName: document.getElementById('eb-author-name'),
-      authorIcon: document.getElementById('eb-author-icon'),
-      thumb: document.getElementById('eb-thumb'),
-      image: document.getElementById('eb-image'),
-      footerText: document.getElementById('eb-footer-text'),
-      footerIcon: document.getElementById('eb-footer-icon'),
-      fieldsList: document.getElementById('eb-fields'),
-      status: document.getElementById('eb-status'),
-      outputEl: document.getElementById('json-output') // shared output area in preview panel
-    };
-
-    function hexToInt(hex){ return parseInt(hex.replace('#',''),16) }
-    function ebCreateField(name='', value='', inline=false){
-      const item = document.createElement('div'); item.className='field-item';
-      const top = document.createElement('div'); top.className='field-top';
-      const nameInput = document.createElement('input'); nameInput.type='text'; nameInput.placeholder='Field name'; nameInput.value=name;
-      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.alignItems='center'; actions.style.gap='8px';
-      const inlineWrap = document.createElement('label'); inlineWrap.className='field-inline';
-      const inlineCheckbox = document.createElement('input'); inlineCheckbox.type='checkbox'; inlineCheckbox.checked=inline;
-      const inlineLabel = document.createElement('span'); inlineLabel.textContent='Inline';
-      inlineWrap.appendChild(inlineCheckbox); inlineWrap.appendChild(inlineLabel);
-      const removeBtn = document.createElement('button'); removeBtn.type='button'; removeBtn.className='btn-ghost btn-xs'; removeBtn.textContent='Remove';
-      removeBtn.addEventListener('click',()=>{ item.remove(); ebUpdatePreview(); });
-      actions.appendChild(inlineWrap); actions.appendChild(removeBtn);
-      top.appendChild(nameInput); top.appendChild(actions);
-      const valueArea = document.createElement('textarea'); valueArea.placeholder='Field value'; valueArea.value=value;
-      [nameInput,valueArea,inlineCheckbox].forEach(el=>el.addEventListener('input',ebUpdatePreview));
-      item.appendChild(top); item.appendChild(valueArea);
-      eb.fieldsList.appendChild(item);
-      return item;
-    }
-    function ebGetFields(){
-      return Array.from(eb.fieldsList.querySelectorAll('.field-item')).map(item=>{
-        const name = item.querySelector('input[type="text"]').value.trim();
-        const value = item.querySelector('textarea').value.trim();
-        const inline = item.querySelector('input[type="checkbox"]').checked;
-        if(!name && !value) return null;
-        return { name: name||'\u200b', value: value||'\u200b', inline: !!inline };
-      }).filter(Boolean);
-    }
-    function ebApplyPreset(v){
-      if(v==='announce'){ eb.color.value='#f97316'; if(!eb.title.value) eb.title.value='Announcement' }
-      if(v==='success'){ eb.color.value='#22c55e'; if(!eb.title.value) eb.title.value='Success' }
-      if(v==='error'){ eb.color.value='#ef4444'; if(!eb.title.value) eb.title.value='Error' }
-      if(v==='bigwizard'){ eb.color.value='#38bdf8'; if(!eb.title.value) eb.title.value='Bigwizard Update'; if(!eb.footerText.value) eb.footerText.value='Powered by Bigwizard Bot' }
-      ebUpdatePreview();
-    }
-    function ebUpdatePreview(){
-      // update right-panel preview quick area
-      const rpColor = document.getElementById('rp-color');
-      const rpTitle = document.getElementById('rp-title');
-      const rpDesc = document.getElementById('rp-desc');
-      const rpAuthor = document.getElementById('rp-author');
-      const rpAuthorName = document.getElementById('rp-author-name');
-      rpColor.style.background = eb.color.value || '#5865f2';
-      rpTitle.style.display = eb.title.value.trim() ? '' : 'none';
-      rpTitle.textContent = eb.title.value.trim();
-      rpDesc.textContent = eb.desc.value.trim() || 'Use the tools to generate content and preview here.';
-      if(eb.authorName.value.trim()){ rpAuthor.style.display='flex'; rpAuthorName.textContent = eb.authorName.value.trim(); } else rpAuthor.style.display='none';
-    }
-    function ebBuildEmbed(){
-      const embed = {};
-      if(eb.title.value.trim()) embed.title = eb.title.value.trim();
-      if(eb.url.value.trim()) embed.url = eb.url.value.trim();
-      if(eb.desc.value.trim()) embed.description = eb.desc.value.trim();
-      if(eb.color.value) embed.color = hexToInt(eb.color.value);
-      if(eb.authorName.value.trim() || eb.authorIcon.value.trim()){ embed.author = {}; if(eb.authorName.value.trim()) embed.author.name = eb.authorName.value.trim(); if(eb.authorIcon.value.trim()) embed.author.icon_url = eb.authorIcon.value.trim(); }
-      if(eb.thumb.value.trim()) embed.thumbnail = { url: eb.thumb.value.trim() };
-      if(eb.image.value.trim()) embed.image = { url: eb.image.value.trim() };
-      if(eb.footerText.value.trim() || eb.footerIcon.value.trim()){ embed.footer = {}; if(eb.footerText.value.trim()) embed.footer.text = eb.footerText.value.trim(); if(eb.footerIcon.value.trim()) embed.footer.icon_url = eb.footerIcon.value.trim(); }
-      const fields = ebGetFields();
-      if(fields.length) embed.fields = fields;
-      return embed;
-    }
-    document.getElementById('eb-add-field').addEventListener('click', ()=>{ ebCreateField(); ebUpdatePreview(); });
-    document.getElementById('eb-clear-fields').addEventListener('click', ()=>{ eb.fieldsList.innerHTML=''; ebUpdatePreview(); });
-    document.getElementById('eb-preset').addEventListener('change', (e)=> ebApplyPreset(e.target.value));
-    document.getElementById('eb-generate').addEventListener('click', ()=> {
-      const payload = { embeds: [ ebBuildEmbed() ] };
-      const pretty = JSON.stringify(payload,null,2);
-      // show in the shared output area on the right (json-output)
-      const sharedOutput = document.getElementById('json-output');
-      sharedOutput.textContent = pretty; sharedOutput.classList.remove('empty');
-      eb.status.textContent = 'JSON generated';
-      // also update quick preview
-      ebUpdatePreview();
-    });
-    document.getElementById('eb-copy').addEventListener('click', async ()=> {
-      const sharedOutput = document.getElementById('json-output');
-      const text = sharedOutput.textContent || '';
-      if(!text || sharedOutput.classList.contains('empty')){ eb.status.textContent = 'Nothing to copy'; return; }
-      try{ await navigator.clipboard.writeText(text); eb.status.textContent = 'Copied embed JSON' }catch(e){ eb.status.textContent = 'Copy failed' }
-    });
-    // initialize one field
-    ebCreateField();
-    ebUpdatePreview();
-
-    // Slash Command Generator logic
-    function parseOptions(text){
-      const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-      const options = [];
-      for(const line of lines){
-        const parts = line.split(':').map(p=>p.trim());
-        if(parts.length < 3) continue;
-        const [name,type,desc,req] = parts;
-        options.push({ name, description: desc, type: mapType(type), required: (req === 'true' || req === 'True') });
-      }
-      return options;
-    }
-    function mapType(t){
-      // Discord API types mapping (simplified)
-      const map = { string:3, integer:4, boolean:5, user:6, channel:7, role:8, mentionable:9, number:10 };
-      return map[t] || 3;
-    }
-    document.getElementById('sg-generate').addEventListener('click', ()=>{
-      const name = document.getElementById('sg-name').value.trim();
-      const desc = document.getElementById('sg-desc').value.trim() || 'No description';
-      const opts = parseOptions(document.getElementById('sg-options').value);
-      const payload = { name, description: desc, options: opts };
-      const pretty = JSON.stringify(payload,null,2);
-      document.getElementById('sg-output').textContent = pretty; document.getElementById('sg-output').classList.remove('empty');
-      document.getElementById('sg-status').textContent = 'Command JSON generated';
-    });
-    document.getElementById('sg-copy').addEventListener('click', async ()=>{
-      const text = document.getElementById('sg-output').textContent || '';
-      if(!text || document.getElementById('sg-output').classList.contains('empty')){ document.getElementById('sg-status').textContent='Nothing to copy'; return; }
-      try{ await navigator.clipboard.writeText(text); document.getElementById('sg-status').textContent='Copied'</label>
-              <input id="sg-desc" type="text" placeholder="Check bot latency" />
-            </div>
-          </div>
-
-          <div style="margin-top:6px">
-            <label>Options (name:type:description:required) one per line</label>
-            <textarea id="sg-options" placeholder="user:user:Target user:true\nreason:string:Reason:false"></textarea>
-            <div class="hint">Supported types: string, integer, boolean, user, channel, role, mentionable, number</div>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="sg-generate">Generate JSON</button>
-              <button id="sg-copy" class="btn-ghost">Copy JSON</button>
-            </div>
-            <div class="small-muted" id="sg-status"></div>
-          </div>
-
-          <div class="output empty" id="sg-output">Slash command JSON will appear here.</div>
-
-          <div style="margin-top:8px" class="hint">You can paste the generated JSON into your registration script or use it with REST endpoints.</div>
-        </div>
-
-        <!-- Permission Calculator -->
-        <div id="perms-calc" class="view" style="display:none">
-          <div class="panel-title">Permission Calculator</div>
-          <div class="hint">Toggle permissions to compute the permission integer for OAuth2 invite or role checks.</div>
-
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px">
-            <!-- A subset of common permissions -->
-            <label><input type="checkbox" class="perm" data-bit="0"> CREATE_INSTANT_INVITE</label>
-            <label><input type="checkbox" class="perm" data-bit="1"> KICK_MEMBERS</label>
-            <label><input type="checkbox" class="perm" data-bit="2"> BAN_MEMBERS</label>
-            <label><input type="checkbox" class="perm" data-bit="3"> ADMINISTRATOR</label>
-            <label><input type="checkbox" class="perm" data-bit="4"> MANAGE_CHANNELS</label>
-            <label><input type="checkbox" class="perm" data-bit="5"> MANAGE_GUILD</label>
-            <label><input type="checkbox" class="perm" data-bit="6"> ADD_REACTIONS</label>
-            <label><input type="checkbox" class="perm" data-bit="7"> VIEW_AUDIT_LOG</label>
-            <label><input type="checkbox" class="perm" data-bit="8"> PRIORITY_SPEAKER</label>
-            <label><input type="checkbox" class="perm" data-bit="9"> STREAM</label>
-            <label><input type="checkbox" class="perm" data-bit="10"> VIEW_CHANNEL</label>
-            <label><input type="checkbox" class="perm" data-bit="11"> SEND_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="12"> SEND_TTS_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="13"> MANAGE_MESSAGES</label>
-            <label><input type="checkbox" class="perm" data-bit="14"> EMBED_LINKS</label>
-            <label><input type="checkbox" class="perm" data-bit="15"> ATTACH_FILES</label>
-            <label><input type="checkbox" class="perm" data-bit="16"> READ_MESSAGE_HISTORY</label>
-            <label><input type="checkbox" class="perm" data-bit="17"> MENTION_EVERYONE</label>
-            <label><input type="checkbox" class="perm" data-bit="18"> USE_EXTERNAL_EMOJIS</label>
-            <label><input type="checkbox" class="perm" data-bit="19"> VIEW_GUILD_INSIGHTS</label>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px">
-            <div class="btn-row">
-              <button id="pc-calc">Calculate</button>
-              <button id="pc-clear" class="btn-ghost">Clear</button>
-            </div>
-            <div class="small-muted">Permission integer:</div>
-          </div>
-
-          <div class="output empty" id="pc-output">0</div>
-        </div>
-
-        <!-- Config Editor -->
-        <div id="config-editor" class="view" style="display:none">
-          <div class="panel-title">Config Editor</div>
-          <div class="hint">Edit bot config values and export JSON. Sensitive values remain local to your browser.</div>
-
-          <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Bot name</label>
-            <input id="cfg-name" type="text" placeholder="MyBot" />
-            <label>Prefix</label>
-            <input id="cfg-prefix" type="text" placeholder="!" />
-            <label>Owner ID</label>
-            <input id="cfg-owner" type="text" placeholder="123456789012345678" />
-            <label>Default settings (JSON)</label>
-            <textarea id="cfg-defaults" placeholder='{"welcomeChannel": "general", "modLog": "mod-log"}'></textarea>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="cfg-generate">Generate Config JSON</button>
-              <button id="cfg-copy" class="btn-ghost">Copy JSON</button>
-            </div>
-            <div class="small-muted" id="cfg-status"></div>
-          </div>
-
-          <div class="output empty" id="cfg-output">Config JSON will appear here.</div>
-        </div>
-
-        <!-- API Tester -->
-        <div id="api-tester" class="view" style="display:none">
-          <div class="panel-title">Discord API Tester</div>
-          <div class="hint">Client-side tester. Paste a bot token only if you understand the risks; it is stored only in memory while the page is open.</div>
-
-          <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Bot token (optional)</label>
-            <input id="api-token" type="text" placeholder="Bot token (kept in memory only)" />
-            <label>Endpoint</label>
-            <select id="api-endpoint">
-              <option value="GET /users/@me">GET /users/@me</option>
-              <option value="GET /guilds/{guild.id}">GET /guilds/{guild.id}</option>
-              <option value="GET /channels/{channel.id}">GET /channels/{channel.id}</option>
-              <option value="GET /channels/{channel.id}/messages">GET /channels/{channel.id}/messages</option>
-            </select>
-            <label>Custom path (optional)</label>
-            <input id="api-path" type="text" placeholder="/channels/123/messages" />
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="api-send">Send Request</button>
-              <button id="api-clear" class="btn-ghost">Clear</button>
-            </div>
-            <div class="small-muted" id="api-status"></div>
-          </div>
-
-          <div class="output empty" id="api-output">API response will appear here. Note: CORS may block some requests in the browser.</div>
-        </div>
-
-        <!-- Interaction Simulator -->
-        <div id="interaction-sim" class="view" style="display:none">
-          <div class="panel-title">Interaction Simulator</div>
-          <div class="hint">Mock payloads for buttons, selects, and modals to test your handler logic.</div>
-
-          <div style="display:grid;gap:8px;margin-top:6px">
-            <label>Interaction type</label>
-            <select id="is-type">
-              <option value="button">Button</option>
-              <option value="select">Select menu</option>
-              <option value="modal">Modal submit</option>
-            </select>
-
-            <label>Custom ID</label>
-            <input id="is-customid" type="text" placeholder="my_button_123" />
-
-            <label>Values (for select) comma separated</label>
-            <input id="is-values" type="text" placeholder="opt1,opt2" />
-
-            <label>Modal fields (one per line: id:label:value)</label>
-            <textarea id="is-modal-fields" placeholder="name:Your name:Chase\nemail:Email:chase@example.com"></textarea>
-          </div>
-
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-            <div class="btn-row">
-              <button id="is-generate">Generate Payload</button>
-              <button id="is-copy" class="btn-ghost">Copy Payload</button>
-            </div>
-            <div class="small-muted" id="is-status"></div>
-          </div>
-
-          <div class="output empty" id="is-output">Generated interaction payload will appear here.</div>
-        </div>
-      </section>
-
-      <!-- RIGHT: Preview / Quick tools -->
-      <aside class="panel" id="right-panel">
-        <div class="panel-title">Quick Tools</div>
-
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <div>
-            <div class="small-muted">Quick paste area</div>
-            <textarea id="quick-paste" placeholder="Paste logs, responses, or config snippets here"></textarea>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
-              <div class="btn-row">
-                <button id="quick-copy" class="btn-ghost">Copy</button>
-                <button id="quick-clear" class="btn-ghost">Clear</button>
-              </div>
-              <div class="small-muted">Local only</div>
-            </div>
-          </div>
-
-          <div>
-            <div class="small-muted">Preview area</div>
-            <div class="preview-card" style="margin-top:8px">
-              <div class="preview-color" id="rp-color"></div>
-              <div class="preview-main">
-                <div class="preview-author" id="rp-author" style="display:none"><img id="rp-author-icon" style="width:20px;height:20px;border-radius:50%;display:none" /><div id="rp-author-name"></div></div>
-                <div class="preview-title" id="rp-title" style="display:none">Preview title</div>
-                <div class="preview-desc" id="rp-desc">Use the tools to generate content and preview here.</div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <div class="small-muted">Shortcuts</div>
-            <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-              <button id="sc-gen-json" class="btn-ghost">Generate JSON (Embed)</button>
-              <button id="sc-validate-json" class="btn-ghost">Validate JSON (JSON Lab)</button>
-            </div>
-          </div>
-        </div>
-      </aside>
-    </main>
-  </div>
-
-  <script>
-    // Simple view navigation
-    const navBtns = Array.from(document.querySelectorAll('.nav-btn'));
-    const views = Array.from(document.querySelectorAll('.view'));
-    const cards = Array.from(document.querySelectorAll('.card'));
-    function showView(id){
-      views.forEach(v => v.id === id ? v.style.display = '' : v.style.display = 'none');
-      navBtns.forEach(b => b.dataset.target === id ? b.classList.add('active') : b.classList.remove('active'));
-      // update right-panel preview quick state
-    }
-    navBtns.forEach(b => b.addEventListener('click', () => showView(b.dataset.target)));
-    cards.forEach(c => c.addEventListener('click', () => showView(c.dataset.target)));
-
-    // JSON Lab logic
-    const jlInput = document.getElementById('jl-input');
-    const jlOutput = document.getElementById('jl-output');
-    const jlStatus = document.getElementById('jl-status');
-    document.getElementById('jl-validate').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      jlStatus.textContent = '';
-      if(!raw){ jlOutput.textContent = 'Nothing to validate.'; jlOutput.classList.add('empty'); jlStatus.textContent = 'Empty'; return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const pretty = JSON.stringify(parsed,null,2);
-        jlOutput.textContent = pretty; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Valid JSON';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty');
-        jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-format').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      if(!raw){ jlOutput.textContent = 'Nothing to format.'; jlOutput.classList.add('empty'); return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const pretty = JSON.stringify(parsed,null,2);
-        jlInput.value = pretty;
-        jlOutput.textContent = pretty; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Formatted';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty'); jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-minify').addEventListener('click', () => {
-      const raw = jlInput.value.trim();
-      if(!raw){ jlOutput.textContent = 'Nothing to minify.'; jlOutput.classList.add('empty'); return; }
-      try{
-        const parsed = JSON.parse(raw);
-        const min = JSON.stringify(parsed);
-        jlInput.value = min;
-        jlOutput.textContent = min; jlOutput.classList.remove('empty');
-        jlStatus.textContent = 'Minified';
-      }catch(e){
-        jlOutput.textContent = 'Error: ' + e.message; jlOutput.classList.add('empty'); jlStatus.textContent = 'Invalid JSON';
-      }
-    });
-    document.getElementById('jl-copy').addEventListener('click', async () => {
-      const text = jlOutput.textContent || '';
-      if(!text || jlOutput.classList.contains('empty')){ jlStatus.textContent = 'Nothing to copy.'; return; }
-      try{ await navigator.clipboard.writeText(text); jlStatus.textContent = 'Copied.' }catch(e){ jlStatus.textContent = 'Copy failed.' }
-    });
-    document.getElementById('jl-clear').addEventListener('click', () => { jlInput.value=''; jlOutput.textContent='Formatted JSON will appear here.'; jlOutput.classList.add('empty'); jlStatus.textContent='Cleared' });
-
-    // Embed Builder logic
-    const eb = {
-      title: document.getElementById('eb-title'),
-      url: document.getElementById('eb-url'),
-      desc: document.getElementById('eb-desc'),
-      color: document.getElementById('eb-color'),
-      preset: document.getElementById('eb-preset'),
-      authorName: document.getElementById('eb-author-name'),
-      authorIcon: document.getElementById('eb-author-icon'),
-      thumb: document.getElementById('eb-thumb'),
-      image: document.getElementById('eb-image'),
-      footerText: document.getElementById('eb-footer-text'),
-      footerIcon: document.getElementById('eb-footer-icon'),
-      fieldsList: document.getElementById('eb-fields'),
-      status: document.getElementById('eb-status'),
-      outputEl: document.getElementById('json-output') // shared output area in preview panel
-    };
-
-    function hexToInt(hex){ return parseInt(hex.replace('#',''),16) }
-    function ebCreateField(name='', value='', inline=false){
-      const item = document.createElement('div'); item.className='field-item';
-      const top = document.createElement('div'); top.className='field-top';
-      const nameInput = document.createElement('input'); nameInput.type='text'; nameInput.placeholder='Field name'; nameInput.value=name;
-      const actions = document.createElement('div'); actions.style.display='flex'; actions.style.alignItems='center'; actions.style.gap='8px';
-      const inlineWrap = document.createElement('label'); inlineWrap.className='field-inline';
-      const inlineCheckbox = document.createElement('input'); inlineCheckbox.type='checkbox'; inlineCheckbox.checked=inline;
-      const inlineLabel = document.createElement('span'); inlineLabel.textContent='Inline';
-      inlineWrap.appendChild(inlineCheckbox); inlineWrap.appendChild(inlineLabel);
-      const removeBtn = document.createElement('button'); removeBtn.type='button'; removeBtn.className='btn-ghost btn-xs'; removeBtn.textContent='Remove';
-      removeBtn.addEventListener('click',()=>{ item.remove(); ebUpdatePreview(); });
-      actions.appendChild(inlineWrap); actions.appendChild(removeBtn);
-      top.appendChild(nameInput); top.appendChild(actions);
-      const valueArea = document.createElement('textarea'); valueArea.placeholder='Field value'; valueArea.value=value;
-      [nameInput,valueArea,inlineCheckbox].forEach(el=>el.addEventListener('input',ebUpdatePreview));
-      item.appendChild(top); item.appendChild(valueArea);
-      eb.fieldsList.appendChild(item);
-      return item;
-    }
-    function ebGetFields(){
-      return Array.from(eb.fieldsList.querySelectorAll('.field-item')).map(item=>{
-        const name = item.querySelector('input[type="text"]').value.trim();
-        const value = item.querySelector('textarea').value.trim();
-        const inline = item.querySelector('input[type="checkbox"]').checked;
-        if(!name && !value) return null;
-        return { name: name||'\u200b', value: value||'\u200b', inline: !!inline };
-      }).filter(Boolean);
-    }
-    function ebApplyPreset(v){
-      if(v==='announce'){ eb.color.value='#f97316'; if(!eb.title.value) eb.title.value='Announcement' }
-      if(v==='success'){ eb.color.value='#22c55e'; if(!eb.title.value) eb.title.value='Success' }
-      if(v==='error'){ eb.color.value='#ef4444'; if(!eb.title.value) eb.title.value='Error' }
-      if(v==='bigwizard'){ eb.color.value='#38bdf8'; if(!eb.title.value) eb.title.value='Bigwizard Update'; if(!eb.footerText.value) eb.footerText.value='Powered by Bigwizard Bot' }
-      ebUpdatePreview();
-    }
-    function ebUpdatePreview(){
-      // update right-panel preview quick area
-      const rpColor = document.getElementById('rp-color');
-      const rpTitle = document.getElementById('rp-title');
-      const rpDesc = document.getElementById('rp-desc');
-      const rpAuthor = document.getElementById('rp-author');
-      const rpAuthorName = document.getElementById('rp-author-name');
-      rpColor.style.background = eb.color.value || '#5865f2';
-      rpTitle.style.display = eb.title.value.trim() ? '' : 'none';
-      rpTitle.textContent = eb.title.value.trim();
-      rpDesc.textContent = eb.desc.value.trim() || 'Use the tools to generate content and preview here.';
-      if(eb.authorName.value.trim()){ rpAuthor.style.display='flex'; rpAuthorName.textContent = eb.authorName.value.trim(); } else rpAuthor.style.display='none';
-    }
-    function ebBuildEmbed(){
-      const embed = {};
-      if(eb.title.value.trim()) embed.title = eb.title.value.trim();
-      if(eb.url.value.trim()) embed.url = eb.url.value.trim();
-      if(eb.desc.value.trim()) embed.description = eb.desc.value.trim();
-      if(eb.color.value) embed.color = hexToInt(eb.color.value);
-      if(eb.authorName.value.trim() || eb.authorIcon.value.trim()){ embed.author = {}; if(eb.authorName.value.trim()) embed.author.name = eb.authorName.value.trim(); if(eb.authorIcon.value.trim()) embed.author.icon_url = eb.authorIcon.value.trim(); }
-      if(eb.thumb.value.trim()) embed.thumbnail = { url: eb.thumb.value.trim() };
-      if(eb.image.value.trim()) embed.image = { url: eb.image.value.trim() };
-      if(eb.footerText.value.trim() || eb.footerIcon.value.trim()){ embed.footer = {}; if(eb.footerText.value.trim()) embed.footer.text = eb.footerText.value.trim(); if(eb.footerIcon.value.trim()) embed.footer.icon_url = eb.footerIcon.value.trim(); }
-      const fields = ebGetFields();
-      if(fields.length) embed.fields = fields;
-      return embed;
-    }
-    document.getElementById('eb-add-field').addEventListener('click', ()=>{ ebCreateField(); ebUpdatePreview(); });
-    document.getElementById('eb-clear-fields').addEventListener('click', ()=>{ eb.fieldsList.innerHTML=''; ebUpdatePreview(); });
-    document.getElementById('eb-preset').addEventListener('change', (e)=> ebApplyPreset(e.target.value));
-    document.getElementById('eb-generate').addEventListener('click', ()=> {
-      const payload = { embeds: [ ebBuildEmbed() ] };
-      const pretty = JSON.stringify(payload,null,2);
-      // show in the shared output area on the right (json-output)
-      const sharedOutput = document.getElementById('json-output');
-      sharedOutput.textContent = pretty; sharedOutput.classList.remove('empty');
-      eb.status.textContent = 'JSON generated';
-      // also update quick preview
-      ebUpdatePreview();
-    });
-    document.getElementById('eb-copy').addEventListener('click', async ()=> {
-      const sharedOutput = document.getElementById('json-output');
-      const text = sharedOutput.textContent || '';
-      if(!text || sharedOutput.classList.contains('empty')){ eb.status.textContent = 'Nothing to copy'; return; }
-      try{ await navigator.clipboard.writeText(text); eb.status.textContent = 'Copied embed JSON' }catch(e){ eb.status.textContent = 'Copy failed' }
-    });
-    // initialize one field
-    ebCreateField();
-    ebUpdatePreview();
-
-    // Slash Command Generator logic
-    function parseOptions(text){
-      const lines = text.split('\n').map(l=>l.trim()).filter(Boolean);
-      const options = [];
-      for(const line of lines){
-        const parts = line.split(':').map(p=>p.trim());
-        if(parts.length < 3) continue;
-        const [name,type,desc,req] = parts;
-        options.push({ name, description: desc, type: mapType(type), required: (req === 'true' || req === 'True') });
-      }
-      return options;
-    }
-    function mapType(t){
-      // Discord API types mapping (simplified)
-      const map = { string:3, integer:4, boolean:5, user:6, channel:7, role:8, mentionable:9, number:10 };
-      return map[t] || 3;
-    }
-    document.getElementById('sg-generate').addEventListener('click', ()=>{
-      const name = document.getElementById('sg-name').value.trim();
-      const desc = document.getElementById('sg-desc').value.trim() || 'No description';
-      const opts = parseOptions(document.getElementById('sg-options').value);
-      const payload = { name, description: desc, options: opts };
-      const pretty = JSON.stringify(payload,null,2);
-      document.getElementById('sg-output').textContent = pretty; document.getElementById('sg-output').classList.remove('empty');
-      document.getElementById('sg-status').textContent = 'Command JSON generated';
-    });
-    document.getElementById('sg-copy').addEventListener('click', async ()=>{
-      const text = document.getElementById('sg-output').textContent || '';
-      if(!text || document.getElementById('sg-output').classList.contains('empty')){ document.getElementById('sg-status').textContent='Nothing to copy'; return; }
-      try{ await navigator.clipboard.writeText(text); document.getElementById('sg-status').textContent='Copied' }catch(e){ document.getElementById('sg-status').textContent='Copy failed' }
-    });
-
-    // Permission Calculator logic
-    function calcPerms(){
-      const checks = Array.from(document.querySelectorAll('.perm'));
-      let total = BigInt(0);
-      checks.forEach(ch => {
-        if(ch.checked){
-          const bit = Number(ch.dataset.bit);
-          total = total | (BigInt(1) << BigInt(bit));
-        }
-      });
-      return total.toString();
-    }
-    document.getElementById('pc-calc').addEventListener('click', ()=> {
-      const val = calcPerms();
-      const out = document.getElementById('pc-output');
-      out.textContent = val; out.classList.remove('empty');
-    });
-    document.getElementById('pc-clear').addEventListener('click', ()=> {
-      document.querySelectorAll('.perm').forEach(ch => ch.checked = false);
-      document.getElementById('pc-output').textContent = '0'; document.getElementById('pc-output').classList.add('empty');
-    });
-
-    // Config Editor logic
-    document.getElementById('cfg-generate').addEventListener('click', ()=>{
-      const cfg = {
-        name: document.getElementById('cfg-name').value.trim() || 'MyBot',
-        prefix: document.getElementById('cfg-prefix').value.trim() || '!',
-        owner: document.getElementById('cfg-owner').value.trim() || '',
-      };
-      const defaultsRaw = document.getElementById('cfg-defaults').value.trim();
-      try{
-        cfg.defaults = defaultsRaw ? JSON.parse(defaultsRaw) : {};
-        const pretty = JSON.stringify(cfg,null,2);
-        document.getElementById('cfg-output').textContent = pretty; document.getElement
+        <a href="https://bigwizardmedia.com" class="btn btn-primary">Visit Website</a>
+        <a href="mailto:hello@bigwizardmedia.com" class="btn btn-secondary">Get a Quote</a>
+        <a href="https://t.me/bigwizardmedia" class="btn btn-primary">Message on Telegram</a>
+    </div>
+
+    <footer>
+        © 2026 Bigwizard Media — Creator Tools & Digital Strategy
+    </footer>
+
+    <script>
+        const config = {
+            name: "Bigwizard Media",
+            services: [
+                "🎬 Video Production",
+                "📊 Digital Strategy",
+                "📱 Social Media Management",
+                "✨ Content Creation"
+            ]
+        };
+
+        document.getElementById('brand-name').innerText = config.name;
+
+        const listContainer = document.getElementById('service-list');
+        config.services.forEach((item, index) => {
+            let entry = document.createElement('li');
+            entry.innerText = item;
+            setTimeout(() => entry.style.opacity = 1, 150 * index);
+            listContainer.appendChild(entry);
+        });
+
+        window.onload = () => document.body.classList.add('loaded');
+    </script>
+
+</body>
+</html>
